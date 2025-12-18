@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
     'rest_framework',
+    'rest_framework.authtoken', #django rest framework built-in token authentication system.
+    'django_filters',
+    'guardian',
     'accounts',
     'elections',
     'voting',
@@ -127,3 +131,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+# REST_FRAMEWORK = django-filter as the default filter backend for DRF
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+# AUTHENTICATION_BACKENDS=django_guardian requires its own authentication backend to handle object-level permissions
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # Django's default
+    'guardian.backends.ObjectPermissionBackend', # for django-guardian
+)
