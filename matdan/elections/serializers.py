@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Election
+from .models import Election, Candidate
+
 
 class ElectionCreationSerializer(serializers.ModelSerializer):
     
@@ -31,6 +32,13 @@ class ElectionCreationSerializer(serializers.ModelSerializer):
         
         return data
 
+
+class CandidateSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Candidate
+        fields = ['id', 'name', 'party', 'election', 'photo_url']
+        read_only_fields = ['election']
 
 
 

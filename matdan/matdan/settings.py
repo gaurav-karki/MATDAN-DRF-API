@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)s3*49bpcb*gc7g9$2k#tn7fm(aw7-#lsrvv(d^4h@aop8gk=+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
-
     'rest_framework',
     'rest_framework.authtoken', #django rest framework built-in token authentication system.
     'django_filters',
@@ -50,7 +49,9 @@ INSTALLED_APPS = [
     'voting',
     'blockchain',
 ]
+
 SITE_ID = 1
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -142,11 +143,16 @@ STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'accounts.User'
 
+#Redirect to this URL after a successful login
+LOGIN_REDIRECT_URL = '/api/v1/'
+
 # REST_FRAMEWORK = django-filter as the default filter backend for DRF
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRenderer',
-                                'rest_framework.renderers.BrowsableAPIRenderer']
+    'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRenderer', 
+                                'rest_framework.renderers.BrowsableAPIRenderer'],
+    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination', #apply pagination to split large data size across multiple pages to improve performance and user experience
+    'PAGE_SIZE':10
 }
 
 # AUTHENTICATION_BACKENDS=django_guardian requires its own authentication backend to handle object-level permissions
@@ -154,3 +160,7 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # Django's default
     'guardian.backends.ObjectPermissionBackend', # for django-guardian
 )
+
+# Media files (user-uploaded files)
+MEDIA_URL ='/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

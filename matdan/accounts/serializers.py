@@ -9,7 +9,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         #list of the field from the user model(i.e. accounts/model.py) that will be included in the serialized data
-        fields = ('username', 'password', 'email', 'wallet_address')
+        fields = ('username', 'password', 'email', 'wallet_address', 'national_id_hash')
 
     #method to create a new user instance when valid data is submitted to the serializer
     def create(self, validated_data):
@@ -17,7 +17,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             username = validated_data['username'],
             email = validated_data.get('email'),
             password = validated_data['password'],
-            wallet_address = validated_data.get('wallet_address')
+            wallet_address = validated_data.get('wallet_address'),
+            national_id_hash = validated_data.get('national_id_hash')
         )
         return user
     

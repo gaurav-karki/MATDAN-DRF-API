@@ -1,13 +1,14 @@
 from rest_framework.routers import DefaultRouter
+from .views import ElectionCreationView, CandidateListByElectionView
 from django.urls import path
-from .views import ElectionCreationView
+
+app_name = 'elections'
 
 router = DefaultRouter()
-router.register(r'elections', ElectionCreationView, basename='election')
+router.register(r'', ElectionCreationView, basename='election')
 
 urlpatterns = router.urls
 
-#urlpatterns = [
-    #path('',views.elections_home, name='elections_home'),
-    #path('election/',views.ElectionCreationView.as_view(), name='election')
-#]
+urlpatterns += [
+    path('<uuid:election_id>/candidates', CandidateListByElectionView.as_view(), name='election-candidates'),
+]

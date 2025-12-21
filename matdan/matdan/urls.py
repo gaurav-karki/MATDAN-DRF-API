@@ -16,13 +16,27 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
-urlpatterns = [
-    path('', include('accounts.urls')),
+# API endpoints under a versioned path
+api_urlpatterns = [
+    path('accounts/', include('accounts.urls')),
     path('blockchain/',include('blockchain.urls')),
     path('elections/', include('elections.urls')),
     path('voting/', include('voting.urls')),
+    
+
+]
+urlpatterns = [
+    # all api endpoints are now prefixed with 'api/'
+    path('api/v1/', include(api_urlpatterns)),
+
+    #Non-API paths like admin and auth
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
