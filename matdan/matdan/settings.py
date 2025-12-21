@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
 
     'rest_framework',
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
     'voting',
     'blockchain',
 ]
-
+SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -93,6 +95,14 @@ DATABASES = {
     }
 }
 
+# This logic checks if the 'test' command is being run.
+# If so, it overrides the default database to use a fast, in-memory SQLite database.
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:'
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -134,7 +144,9 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # REST_FRAMEWORK = django-filter as the default filter backend for DRF
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRenderer',
+                                'rest_framework.renderers.BrowsableAPIRenderer']
 }
 
 # AUTHENTICATION_BACKENDS=django_guardian requires its own authentication backend to handle object-level permissions
