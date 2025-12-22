@@ -39,12 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django-debug-toolbar', 
-
+    # Third-party apps
     'rest_framework',
     'rest_framework.authtoken', #django rest framework built-in token authentication system.
     'django_filters',
     'guardian',
+    'debug_toolbar',
+    #Local apps
     'accounts',
     'elections',
     'voting',

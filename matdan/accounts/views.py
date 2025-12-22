@@ -8,6 +8,7 @@ from django.utils import timezone
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from .permissions import IsAnonymousUser
 
 # Create your views here.
 def accounts(request):
@@ -49,5 +50,5 @@ class UserRegistrationView(generics.CreateAPIView):
     # Use the UserRegistrationSerializer to validate and create a user instance.
     serializer_class = UserRegistrationSerializer
     #Allow any user (authenticated or not) to acces this endpoint for registration
-    permission_classes =[permissions.AllowAny]
+    permission_classes =[IsAnonymousUser]
 
