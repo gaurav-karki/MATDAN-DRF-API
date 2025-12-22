@@ -1,6 +1,9 @@
 from django.urls import path
-from . import views
+from .views import VoteCreateView, ElectionResultsView
+
+app_name = 'voting'
 
 urlpatterns =[
-    path('', views.voting_home, name="voting_home")
+    path('<uuid:election_id>/vote/', VoteCreateView.as_view(), name='cast_vote'),
+    path('<uuid:election_id>/results/', ElectionResultsView.as_view(), name='election_results'),
 ]
