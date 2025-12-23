@@ -1,8 +1,10 @@
+from itertools import count
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
+from yaml import serialize
 from elections.models import Election
-from .serializers import VoteSerializer
+from .serializers import VoteListSerializer, VoteCreateSerializer, MyVoteSerializer
 from rest_framework.response import Response
 from django.db.models import Count
 from rest_framework.views import APIView
@@ -17,10 +19,18 @@ class VoteCreateView(generics.ListCreateAPIView):
     API endpoint that allows user to cast vote in a specific election (POST)
     & view all votes for that election (GET).
     """
-    # serializer to use for validating and deserializing input, and for serializing output.
-    serializer_class = VoteSerializer
+    
     #Ensure that only authenticated users can access that endpoint.
     permission_classes= [permissions.IsAuthenticated]
+
+    # serializer to use for validating and deserializing input, and for serializing output.
+    def get_serializer_class(self):
+        """
+        use diffrent serializer for list and create.
+        """
+        if self.request.method == 'POST':
+            return VoteCreateSerializer
+        return VoteListSerializer
 
     def get_serializer_context(self):
         """
@@ -33,35 +43,77 @@ class VoteCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         """
-        This method is called to get the list of objects for 
+        Return votes for the specific election.
         """
         election_id = self.kwargs.get('election_id')
         return Vote.objects.filter(election_id=election_id)
 
-    def perform_create(self, serializer):
+    def list(self, request, *args, **kwargs):
         """
-        Hook called by CreateModelMixin before saving a new object instance.
-        
-        This implementation injects the `voter` (the authenticated user) and the
-        `election` (retrieved from the URL) into the instance before it is saved.
+        Custom list response with election metadata.
         """
-        election_id = self.kwargs.get('election_id')
-        election = get_object_or_404(Election, id=election_id)
-        # serializer `validate` method will handle the business logic
-        # such as checking if the user has already voted.
-        serializer.save(voter=self.request.user, election=election)
+        queryset = self.filter_queryset(self.get_queryset())
+        election = self.get_serializer_context()['election']
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            paginated_data = self.get_paginated_response(serializer.data).data
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            paginated_data = serializer.data
+        return Response({
+            'status':'success',
+            'message':'Votes retrived sucessfully',
+            'data':{
+                'election':{
+                    'id':str(election.id),
+                    'title':election.title,
+                    'is_active':election.is_active,
+                    'total_votes':queryset.count()
+                },
+                'votes':paginated_data
+            }
+        })
 
     def create(self, request, *args, **kwargs):
         """
-        overrrides the default create method to provide a custom sucess message
+        Custom create response with vote receipt.
         """
         serializer = self.get_serializer(data=request.data)
         # If the data is invalid, this will raise the Validation Error.
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response({'detail':'Vote cast sucessfully,'},status=status.HTTP_201_CREATED, headers=headers)
+        return Response({
+            'status': 'success',
+            'message': 'Your vote has been cast sucessfully.',
+            'data':{
+                'receipt':serializer.data
+            }
+        },status=status.HTTP_201_CREATED, headers=headers)
     
+class MyVoteView(APIView):
+    """
+    API endpoint for users to view their own with verification hash
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, election_id):
+        election = get_object_or_404(Election,pk=election_id)
+        vote = Vote.objects.filter(voter=request.user, election=election).first()
+
+        if not vote:
+            return Response({
+                'status': 'error',
+                'message': 'You have not voted in this election yet.'
+            },status=status.HTTP_404_NOT_FOUND)
+        serializer = MyVoteSerializer(vote)
+        return Response({
+            'status': 'success',
+            'message': 'Your vote retrived sucessfully.',
+            'data': serializer.data
+        })
 
 class ElectionResultsView(APIView):
     """
@@ -79,9 +131,41 @@ class ElectionResultsView(APIView):
 
         # query to group votes by candidate and count them
         vote_counts = Vote.objects.filter(election=election).values(
-            'candidate__id', 'candidate__name'
+            'candidate__id', 
+            'candidate__name',
+            'candidate__party'
             ).annotate(
                 vote_counts=Count('id')
                 ).order_by('-vote_counts')
-        return Response(vote_counts, status=status.HTTP_200_OK)
+        
+        total_votes = sum(item['vote_count'] for item in vote_counts)
+
+        results = []
+        for item in vote_counts:
+            percentage = (item['vote_count'] / total_votes * 100) if total_votes > 0 else 0
+            results.append({
+                'candidate':{
+                    'id': str(item['candidate__id']),
+                    'name': item['candidate__name'],
+                    'party': item['candidate__party']
+                },
+                'vote_count': item['vote_count'],
+                'percentage': round(percentage, 2)
+            })
+        return Response({
+            'status': 'success',
+            'message': 'Election results retrived sucessfully',
+            'data':{
+                'election':{
+                    'id': str(election.id),
+                    'title': election.title,
+                    'is_active': election.is_active
+                },
+                'summary':{
+                    'total_votes': total_votes,
+                    'total_candidates': len(results)
+                },
+                'results': results
+            }
+        })
 
