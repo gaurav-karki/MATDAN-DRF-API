@@ -17,7 +17,7 @@ Matdan is a robust backend API for an online election and voting system, built w
 
 -   **Backend**: Python, Django
 -   **API**: Django REST Framework (DRF)
--   **Database**: SQLite3 (default, configurable)
+-   **Database**: PostgreSQL
 -   **Image Handling**: Pillow
 
 ---
@@ -83,10 +83,12 @@ Here are the primary API endpoints available in the project.
 | Method | Endpoint                                       | Description                                  |
 | :----- | :--------------------------------------------- | :------------------------------------------- |
 | `POST` | `/api/v1/accounts/register/`                   | Register a new user.                         |
-| `POST` | `/api-auth/`                                   | Obtain an authentication token.              |
+| `POST` | `/api-auth/login`                                   | Obtain an authentication token.              |
 | `GET`  | `/api/v1/elections/`                           | List all elections.                          |
 | `POST` | `/api/v1/elections/`                           | Create a new election (Admin only).          |
 | `GET`  | `/api/v1/elections/{election_id}/`             | Retrieve details of a specific election.     |
 | `GET`  | `/api/v1/elections/{election_id}/candidates/`  | List all candidates for a specific election. |
 | `POST` | `/api/v1/elections/{election_id}/candidates/`  | Add a new candidate to an election (Admin only). |
+| `POST` | `/api/v1/voting/{election_id}/vote/`           | Cast vote to a candidate in a active election |
+| `GET`  | `/api/v1/voting/{election_id}/results/`        | View results of the election                  |
 
