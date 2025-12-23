@@ -70,16 +70,16 @@ class ElectionResultsView(APIView):
     """
     permission_classes = [permissions.AllowAny] # Allows users (authenticated or not) to view the election result
 
-    def get_results(self, request, election_id, *args, **kwargs):
+    def get(self, request, election_id, format=None):
         """
         Handle GET requests to retrive and return aggregated elections results.
         """
         #Ensure the election exists before trying to get result
-        get_object_or_404(Election, id=election_id)
+        election = get_object_or_404(Election, pk=election_id)
 
         # query to group votes by candidate and count them
-        vote_counts = Vote.objects.filter(election_id=election_id).values(
-            'candidate_id', 'candidate_name'
+        vote_counts = Vote.objects.filter(election=election).values(
+            'candidate__id', 'candidate__name'
             ).annotate(
                 vote_counts=Count('id')
                 ).order_by('-vote_counts')
