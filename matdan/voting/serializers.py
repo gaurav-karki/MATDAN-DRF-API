@@ -28,7 +28,7 @@ class VoteCreateSerializer(serializers.ModelSerializer):
     that the vote is being cast in an active election, for a valid candidate,
     and that the user has not already voted.
     """
-    candidate_id = serializers.PrimaryKeyRelatedField(queryset=Candidate.objects.none(), source='candidate', write_only=True)
+    candidate_id = serializers.PrimaryKeyRelatedField(queryset=Candidate.objects.all(), source='candidate', write_only=True)
     candidate = CandidateDetailSerializer(read_only=True)
 
     class Meta:
@@ -46,7 +46,7 @@ class VoteCreateSerializer(serializers.ModelSerializer):
 
         if election:
             # Filter candidates to only show those in this election
-            self.fields['candidate'].queryset = Candidate.objects.filter(election=election)
+            self.fields['candidate_id'].queryset = Candidate.objects.filter(election=election)
 
     def validate(self, data):
         """

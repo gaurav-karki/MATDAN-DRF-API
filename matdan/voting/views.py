@@ -135,8 +135,8 @@ class ElectionResultsView(APIView):
             'candidate__name',
             'candidate__party'
             ).annotate(
-                vote_counts=Count('id')
-                ).order_by('-vote_counts')
+                vote_count=Count('id')
+                ).order_by('-vote_count')
         
         total_votes = sum(item['vote_count'] for item in vote_counts)
 
