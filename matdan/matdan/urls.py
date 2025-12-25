@@ -22,9 +22,9 @@ from django.conf.urls.static import static
 # API endpoints under a versioned path
 api_urlpatterns = [
     path('accounts/', include('accounts.urls')),
-    path('blockchain/',include('blockchain.urls')),
+    path('blockchain/', include('blockchain.urls')),
     path('elections/', include('elections.urls')),
-    path('voting/', include('voting.urls')),
+    path('votes/', include('voting.urls')),
     
 
 ]

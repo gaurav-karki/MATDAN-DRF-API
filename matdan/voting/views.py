@@ -1,4 +1,5 @@
 from itertools import count
+from venv import create
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from rest_framework import generics, permissions, status
@@ -8,6 +9,7 @@ from .serializers import VoteListSerializer, VoteCreateSerializer, MyVoteSeriali
 from rest_framework.response import Response
 from django.db.models import Count
 from rest_framework.views import APIView
+
 
 from .models import Vote
 
@@ -93,6 +95,10 @@ class VoteCreateView(generics.ListCreateAPIView):
             }
         },status=status.HTTP_201_CREATED, headers=headers)
     
+    # def perform_create(self, serializer):
+    #     vote = serializer.save(voter=self.request.user)
+    #     create(vote)
+    
 class MyVoteView(APIView):
     """
     API endpoint for users to view their own with verification hash
@@ -129,14 +135,17 @@ class ElectionResultsView(APIView):
         #Ensure the election exists before trying to get result
         election = get_object_or_404(Election, pk=election_id)
 
+        #Get total candidates associated with this election
+        total_candidates = election.candidates.count()
+
         # query to group votes by candidate and count them
         vote_counts = Vote.objects.filter(election=election).values(
             'candidate__id', 
             'candidate__name',
             'candidate__party'
             ).annotate(
-                vote_counts=Count('id')
-                ).order_by('-vote_counts')
+                vote_count=Count('id')
+                ).order_by('-vote_count')
         
         total_votes = sum(item['vote_count'] for item in vote_counts)
 
@@ -163,7 +172,7 @@ class ElectionResultsView(APIView):
                 },
                 'summary':{
                     'total_votes': total_votes,
-                    'total_candidates': len(results)
+                    'total_candidates': total_candidates
                 },
                 'results': results
             }
