@@ -9,9 +9,13 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+from dotenv import load_dotenv
 from pathlib import Path
 import sys
+import os
+
+#Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -170,3 +174,46 @@ AUTHENTICATION_BACKENDS = (
 # Media files (user-uploaded files)
 MEDIA_URL ='/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+#======================================================
+#Blockchain Configuration
+#======================================================
+
+BLOCKCHAIN_CONFIG = {
+    # URL of the Ethereum node (Ganache for development)
+    'PROVIDER_URL':os.getenv('BLOCKCHAIN_PROVIDER_URL', 'http://127.0.0.1:8545'),
+
+    # Private key for signing transactions (admin account)
+    'PRIVATE_KEY':os.getenv('BLOCKCHAIN_PRIVATE_KEY', ''),
+
+    # Deployed contract address
+    'CONTRACT_ADDRESS':os.getenv('VOTING_CONTRACT_ADDRESS', ''),
+
+    # Chain_ID 
+    'CHAIN_ID': int(os.getenv('BLOCKCHAIN_CHAIN_ID', 1337)),
+
+}
+
+# lOGGING CONFIGURATION FOR BLOCKCHAIN operations
+LOGGING = {
+    'version':1,
+    'disable_existing_loggers':False,
+    'formatters':{
+        'verbose':{
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers':{
+        'console':{
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers':{
+        'blockchain':{
+            'handlers':['console'],
+            'level':'DEBUG',
+        },
+    },
+}

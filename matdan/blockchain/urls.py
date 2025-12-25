@@ -1,6 +1,23 @@
 from django.urls import path
-from . import views
+from .views import (
+    BlockchainStatusView,
+    SyncElectionToBlockchainView,
+    BlockchainElectionStatusView,
+    BlockchainResultsView,
+    VerifyVoteView,
+)
+
+app_name = 'blockchain'
+
 
 urlpatterns =[
-    path('',views.blockchain_home, name='blockchain'),
+    #Connection status
+    path('status/', BlockchainStatusView.as_view(), name='status'),
+    #Election management
+    path('elections/<uuid:election_id>/sync/', SyncElectionToBlockchainView.as_view(), name='sync-election'),
+    path('elections/<uuid:election_id>/activate/', BlockchainElectionStatusView.as_view(), name='activate-election'),
+    path('elections/<uuid:election_id>/results/', BlockchainResultsView.as_view(), name='blockchain-results'),
+
+    #Vote verification
+    path('votes/verify/', VerifyVoteView.as_view(), name='verify-vote'),
 ]
