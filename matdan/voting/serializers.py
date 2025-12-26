@@ -1,7 +1,8 @@
 from rest_framework import serializers
-
 from elections.models import Candidate
 from .models import Vote
+import hashlib
+import time
 
 class CandidateDetailSerializer(serializers.ModelSerializer):
     """
@@ -9,7 +10,7 @@ class CandidateDetailSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Candidate
-        fields = ['id', 'name', 'party']
+        fields = ['id', 'name', 'party', 'blockchain_id']
 class VoteListSerializer(serializers.ModelSerializer):
     """
     Serializer for listing votes (GET request)
@@ -17,16 +18,23 @@ class VoteListSerializer(serializers.ModelSerializer):
     candidate = CandidateDetailSerializer(read_only=True)
     class Meta:
         model = Vote
-        fields = ['id', 'candidate','voted_at']
+        fields = ['id', 'candidate','vote_hash','blockchain_tx', 'blockchain_hash','created_at']
 
 
 class VoteCreateSerializer(serializers.ModelSerializer):
     """
-    Serializer for the Vote model.
+    Serializer for creating a vote.
 
-    Handles the creation of a new vote. It validates the incoming data to ensure
-    that the vote is being cast in an active election, for a valid candidate,
-    and that the user has not already voted.
+    Handles validation to ensure:
+    - Election is active
+    - Candidate belongs to election
+    - Candidate is synced to blockchain
+    - User hasn't already voted
+    
+    BLOCKCHAIN INTEGRATION:
+    - vote_hash: Generated locally by Django (SHA256)
+    - blockchain_tx: Transaction hash from blockchain (set by view)
+    - blockchain_hash: Vote verification hash from smart contract (set by view)
     """
     candidate_id = serializers.PrimaryKeyRelatedField(queryset=Candidate.objects.all(), source='candidate', write_only=True)
     candidate = CandidateDetailSerializer(read_only=True)
@@ -34,8 +42,8 @@ class VoteCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
         #list of the fields from the Vote (i.e voting/models.py) that will be included in the serializer
-        fields = ['id', 'candidate_id','candidate', 'vote_hash','voted_at']
-        read_only_fields = ['id', 'candidate','vote_hash','voted_at']
+        fields = ['id', 'candidate_id','candidate', 'vote_hash','blockchain_tx', 'blockchain_hash','created_at']
+        read_only_fields = ['id', 'candidate','vote_hash','blockchain_tx', 'blockchain_hash', 'created_at']
 
 
     def __init__(self, *args, **kwargs):
@@ -64,6 +72,12 @@ class VoteCreateSerializer(serializers.ModelSerializer):
         if candidate.election != election:
             raise serializers.ValidationError("Candidate doesnot belong to this election")
         
+        # Check if candidate is synced to blockchain
+        if not candidate.blockchain_id:
+            raise serializers.ValidationError({
+                "candidate_id": "Candidate not synced to blockchain. Contact admin."
+            })
+        
         #check if the user has already cast a vote in this election
         if Vote.objects.filter(voter=user, election=election).exists():
             raise serializers.ValidationError("You have already voted")
@@ -74,9 +88,11 @@ class VoteCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """
         Create a new vote with the election from context and current user as voter.
+        Generates a local vote_hash for quick verification.
+        
+        NOTE: blockchain_tx and blockchain_hash are NOT set here.
+        They are set by the view after calling the blockchain service.
         """
-        import hashlib
-        import time
 
         #Get election from context and add it to validated_data
         election = self.context.get('election')
