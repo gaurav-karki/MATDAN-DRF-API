@@ -181,13 +181,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 BLOCKCHAIN_CONFIG = {
     # URL of the Ethereum node (Ganache for development)
-    'PROVIDER_URL':os.getenv('BLOCKCHAIN_PROVIDER_URL', 'http://127.0.0.1:8545'),
+    'PROVIDER_URL':os.getenv('BLOCKCHAIN_PROVIDER_URL'),
 
     # Private key for signing transactions (admin account)
-    'PRIVATE_KEY':os.getenv('BLOCKCHAIN_PRIVATE_KEY', ''),
+    'PRIVATE_KEY':os.getenv('BLOCKCHAIN_PRIVATE_KEY'),
 
     # Deployed contract address
-    'CONTRACT_ADDRESS':os.getenv('VOTING_CONTRACT_ADDRESS', ''),
+    'CONTRACT_ADDRESS':os.getenv('VOTING_CONTRACT_ADDRESS'),
 
     # Chain_ID 
     'CHAIN_ID': int(os.getenv('BLOCKCHAIN_CHAIN_ID', 1337)),

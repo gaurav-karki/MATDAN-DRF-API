@@ -32,18 +32,19 @@ class BlockchainService:
     """
     Service class for interacting with the Voting smart contract.
     """
-    
+    #Load config from Django settings, connects to blockchain, loads accounts and contract. Logs progress
     def __init__(self):
         """Initialize connection to blockchain."""
         logger.info("Initializing BlockchainService...")
         
-        self.config = settings.BLOCKCHAIN_CONFIG
+        self.config = settings.BLOCKCHAIN_CONFIG # Lodas blockchain config from Django settings
         self._connect_to_blockchain()
         self._load_account()
         self._load_contract()
         
         logger.info("BlockchainService initialized successfully!")
     
+    # Connects to Ethereum node(Ganache), Checks connection, logs chainID & Block number.
     def _connect_to_blockchain(self) -> None:
         """Connect to the Ethereum node (Ganache)."""
         provider_url = self.config['PROVIDER_URL']
@@ -60,9 +61,10 @@ class BlockchainService:
         block_number = self.w3.eth.block_number
         logger.info(f"Connected! Chain ID: {chain_id}, Latest Block: {block_number}")
     
+    # Loads Ethereum  account from private key and logs address and balance
     def _load_account(self) -> None:
         """Load the Ethereum account for signing transactions."""
-        private_key = self.config['PRIVATE_KEY']
+        private_key = self.config['PRIVATE_KEY'] #settings.py
         
         if not private_key:
             logger.warning("No private key configured - read-only mode")
@@ -76,6 +78,7 @@ class BlockchainService:
         logger.info(f"Account loaded: {self.account.address}")
         logger.info(f"Account balance: {balance_eth} ETH")
     
+    #
     def _load_contract(self) -> None:
         """Load the smart contract so we can interact with it."""
         contract_address = self.config['CONTRACT_ADDRESS']
