@@ -89,6 +89,36 @@ Here are the primary API endpoints available in the project.
 | `GET`  | `/api/v1/elections/{election_id}/`             | Retrieve details of a specific election.     |
 | `GET`  | `/api/v1/elections/{election_id}/candidates/`  | List all candidates for a specific election. |
 | `POST` | `/api/v1/elections/{election_id}/candidates/`  | Add a new candidate to an election (Admin only). |
-| `POST` | `/api/v1/voting/{election_id}/vote/`           | Cast vote to a candidate in a active election |
-| `GET`  | `/api/v1/voting/{election_id}/results/`        | View results of the election                  |
+| `POST` | `/api/v1/votes/{election_id}/vote/`           | Cast vote to a candidate in a active election |
+| `GET`  | `/api/v1/votes/{election_id}/results/`        | View results of the election                  |
+| `GET`  | `/api/v1/votes/{election_id}/my-vote/`        | View the details of the vote casted by you.   |
+| `GET` | `/api/v1/blockchain/status`                    | View if blockchain service have been sucessfully initialized |
+| `POST` | `/api/v1/blockchain/elections/{election_id}/sync` | Sync the election and candidates to blockchain|
+| `POST` | `/api/v1/blockchain/elections/{election_id}/activate` | Activate or decativate the synced election in blockchain|
+| `POST` | `/api/v1/blockchain/elections/{election_id}/results` | Activate or decativate the synced election in blockchain|
+| `GET` | `/api/v1/blockchain/votes/verify`                     | View or verify the vote you casted                     |
 
+
+
+# Blockchain service
+- **Download Ganache**
+`or`
+- **Download Ganache CLI. You have to have node installed in your system**
+`npm install ganache --save-dev`
+
+### To run Blockchain service
+- create `.env` file in your root directory.
+    -  `BLOCKCHAIN_PROVIDER_URL=http://127.0.0.1:8545`
+    -  `BLOCKCHAIN_PRIVATE_KEY= {your_private_key from ganache CLI}`
+    -  `VOTING_CONTRACT_ADDRESS = {contract_address}`
+    -  `BLOCKCHAIN_CHAIN_ID=1337`
+    -  `DEBUG=TRUE`
+
+- To start Ganache on your terminal. Write
+    `ganache` or custom start method
+
+- To obtain contract address
+    `python manage.py shell`
+    `from blockchain.deploy_contract import deploy_contract`
+    `contract_address = deploy_contract()`
+    `print(contract_address)`
