@@ -101,9 +101,9 @@ Here are the primary API endpoints available in the project.
 
 
 # Blockchain service
-- **Download Ganache**
-`or`
-- **Download Ganache CLI. You have to have node installed in your system**
+- **Download Ganache**<br>
+    *or*
+- **Download Ganache CLI. You have to have node installed in your system**<br>
 `npm install ganache --save-dev`
 
 ### To run Blockchain service
@@ -114,11 +114,11 @@ Here are the primary API endpoints available in the project.
     -  `BLOCKCHAIN_CHAIN_ID=1337`
     -  `DEBUG=TRUE`
 
-- To start Ganache on your terminal. Write
+- To start Ganache on your terminal. Write:<br>
     `ganache` or custom start method
 
 - To obtain contract address
-    `python manage.py shell`
-    `from blockchain.deploy_contract import deploy_contract`
-    `contract_address = deploy_contract()`
-    `print(contract_address)`
+    `python manage.py shell`<br>
+    `from blockchain.deploy_contract import deploy_contract`<br>
+    `contract_address = deploy_contract()`<br>
+    `print(contract_address)`<br>
