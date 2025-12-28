@@ -152,19 +152,20 @@ class BlockchainService:
         Returns:
             Tuple of (success, {tx_hash, vote_hash, block_number, gas_used} or {error})
         """
-        self._ensure_contract_loaded()
-        self._ensure_account_loaded()
+        self._ensure_contract_loaded() # Ensure contract is loaded before proceeding
+        self._ensure_account_loaded() # Ensure accounts are loaded before proceeding
         
         logger.info(f"Casting vote: election={election_id}, candidate={candidate_blockchain_id}")
         
         try:
+            # Prepare the contract function call
             function = self.contract.functions.castVote(
                 election_id,
                 candidate_blockchain_id
             )
-            
+            # Get the current nounce for the account(number of transaction sent)
             nonce = self.w3.eth.get_transaction_count(self.account.address)
-            
+            #Build the transaction dictionary
             tx = function.build_transaction({
                 'from': self.account.address,
                 'nonce': nonce,
@@ -172,20 +173,22 @@ class BlockchainService:
                 'gasPrice': self.w3.eth.gas_price,
                 'chainId': self.config['CHAIN_ID']
             })
-            
+            # Sign the transaction with the private key
             signed_tx = self.w3.eth.account.sign_transaction(
                 tx,
                 self.config['PRIVATE_KEY']
             )
+            # Send the transaction to the blockchain 
             tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
             
             logger.info(f"Vote transaction sent: {tx_hash.hex()}")
-            
+            # Wait for the transaction to  be mined and get the receipt
             receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash, timeout=120)
             
             if receipt['status'] == 1:
                 vote_hash = None
                 try:
+                    # Extract the vote hash form the VoteCast event, if present
                     vote_cast_events = self.contract.events.VoteCast().process_receipt(receipt)
                     if vote_cast_events:
                         vote_hash = vote_cast_events[0]['args']['voteHash'].hex()
@@ -206,7 +209,7 @@ class BlockchainService:
         except ContractLogicError as e:
             error_msg = str(e)
             logger.error(f"Contract error: {error_msg}")
-            
+            # Handle specific contract errors
             if "already voted" in error_msg.lower():
                 return False, {"error": "You have already voted in this election"}
             elif "not active" in error_msg.lower():
@@ -294,12 +297,14 @@ class BlockchainService:
         self._ensure_contract_loaded()
         try:
             result = self.contract.functions.getElection(election_id).call()
+            logger.info(f"Fetching election from blockchain with id: {election_id}")
             return {
                 'id': result[0],
                 'title': result[1],
                 'is_active': result[2],
                 'candidate_count': result[3]
             }
+    
         except Exception as e:
             logger.error(f"Failed to get election: {e}")
             return None

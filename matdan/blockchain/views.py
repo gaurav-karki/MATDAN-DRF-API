@@ -209,6 +209,8 @@ class BlockchainElectionStatusView(APIView):
         if success:
             # Also update Django model
             election.is_active = is_active
+            election.blockchain_tx = result
+            election.blockchain_synced = True
             election.save()
             
             action = "activated" if is_active else "deactivated"

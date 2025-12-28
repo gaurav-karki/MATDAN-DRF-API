@@ -8,6 +8,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from django.shortcuts import get_object_or_404
 from rest_framework.parsers import MultiPartParser, FormParser
+from blockchain.services import get_blockchain_service
+import logging
+
+
+logger = logging.getLogger('election')
+
 
 def elections_home(request):
     return HttpResponse("Welcome to election home page.")
@@ -43,3 +49,4 @@ class CandidateListByElectionView(generics.ListCreateAPIView):
         """
         election = get_object_or_404(Election, pk=self.kwargs['election_id'])
         serializer.save(election=election)
+

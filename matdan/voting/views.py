@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Count
 
+from requests import get
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -111,18 +112,9 @@ class VoteCreateView(generics.ListCreateAPIView):
                 'status': 'error',
                 'message': 'Candidate not synced to blockchain. Contact admin.'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
-         # ============ STEP 1: SAVE TO POSTGRESQL ============
-        vote = Vote.objects.create(
-            voter=request.user,
-            election=election,
-            candidate=candidate
-        )
-        logger.info(f"Vote saved to DB: {vote.id}")
 
         # ============ STEP 2: RECORD ON BLOCKCHAIN ============
         blockchain_service = get_blockchain_service()
-        
         if blockchain_service.is_connected() and blockchain_service.contract:
             logger.info(f"Recording vote on blockchain...")
             
@@ -132,12 +124,15 @@ class VoteCreateView(generics.ListCreateAPIView):
             )
             
             if success:
-                # Save blockchain data to vote record
-                vote.blockchain_tx = result.get('tx_hash')
-                vote.blockchain_hash = result.get('vote_hash')
-                vote.save()
-                
-                logger.info(f"Vote recorded on blockchain: {result.get('tx_hash')}")
+                # ============ STEP 1: SAVE TO POSTGRESQL ============
+                vote = Vote.objects.create(
+                    voter=request.user,
+                    election=election,
+                    candidate=candidate,
+                    blockchain_tx=result.get('tx_hash'),
+                    blockchain_hash=result.get('vote_hash')
+                )
+                logger.info(f"Vote recoreded to blockchain and saved to DB: {vote.id}")
                 
                 return Response({
                     'status': 'success',
@@ -154,17 +149,13 @@ class VoteCreateView(generics.ListCreateAPIView):
                     }
                 }, status=status.HTTP_201_CREATED)
             else:
-                # Blockchain failed - but DB vote is saved
-                # You could rollback the DB vote here if you want
                 logger.error(f"Blockchain recording failed: {result.get('error')}")
                 
                 return Response({
-                    'status': 'partial_success',
-                    'message': 'Vote saved but blockchain recording failed',
-                    'data': {
-                        'vote_id': str(vote.id),
-                        'blockchain_error': result.get('error')
-                    }
+                    'status': 'error',
+                    'message': 'Blockchain recording failed. vote not saved',
+                    'blockchain_error': result.get('error')
+                    
                 }, status=status.HTTP_201_CREATED)
         else:
             # Blockchain not available
