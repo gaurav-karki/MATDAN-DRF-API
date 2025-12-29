@@ -1,6 +1,9 @@
 #serializer module provides functionalities for serializing & deserializing complex data into JSON
 from rest_framework import serializers
 from .models import User
+import logging
+
+logger = logging.getLogger('accounts')
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """
@@ -27,6 +30,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             national_id_hash = validated_data.get('national_id_hash')
         )
         # return the newly created user instance.
+        logger.info(f"New user registered: {user.username}")
         return user
     
         

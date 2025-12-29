@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import logging
+
+logger = logging.getLogger('accounts')
 
 class User(AbstractUser):
     wallet_address = models.CharField(max_length=255, unique=True, null=True, blank=True)
@@ -8,6 +11,15 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+    
+    def save(self, *args, **kwargs):
+        if self.pk and User.objects.filter(pk=self.pk).exists():
+            logger.info(f"Login updated for user -> {self.username}")
+        else:
+            logger.info(f"Saving user: {self.username}")
+        super().save(*args, **kwargs)
+
+
 
 
 
