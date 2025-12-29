@@ -200,8 +200,12 @@ LOGGING = {
     'disable_existing_loggers':False,
     'formatters':{
         'verbose':{
-            'format': '{levelname} {asctime} {module} {message}',
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
             'style': '{',
+        },
+        'simple':{
+            'format':'{levelname} {message}',
+            'style':'{',
         },
     },
     'handlers':{
@@ -209,8 +213,31 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
+        'file':{
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename':'matdan_debug.log',
+            'maxBytes':1024 * 1024 * 15, #15MB
+            'backupCount':10,
+            'formatter': 'verbose',
+        },
     },
     'loggers':{
+        'django':{
+            'handlers':['console', 'file'],
+            'level':'INFO',
+        },
+        'voting':{
+            'handlers':['console', 'file'],
+            'level':'DEBUG',
+        },
+        'elections':{
+            'handlers':['console', 'file'],
+            'level':'DEBUG',
+        },
+        'accounts':{
+            'handlers':['console', 'file'],
+            'level':'DEBUG',
+        },
         'blockchain':{
             'handlers':['console'],
             'level':'DEBUG',
