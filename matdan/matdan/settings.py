@@ -194,7 +194,7 @@ BLOCKCHAIN_CONFIG = {
 
 }
 
-# lOGGING CONFIGURATION FOR BLOCKCHAIN operations
+# lOGGING CONFIGURATION  for operations
 LOGGING = {
     'version':1,
     'disable_existing_loggers':False,
