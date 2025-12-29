@@ -33,6 +33,9 @@ class ElectionCreationView(ModelViewSet):
 
     ordering_fields = ['start_time', 'created_at']
 
+class ElectionUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Election.objects.all()
+    serializer_class = ElectionCreationSerializer
 
 class CandidateListByElectionView(generics.ListCreateAPIView):
     serializer_class = CandidateSerializer

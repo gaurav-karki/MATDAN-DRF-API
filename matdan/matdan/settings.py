@@ -223,19 +223,19 @@ LOGGING = {
     },
     'loggers':{
         'django':{
-            'handlers':['console', 'file'],
+            'handlers':['console'],
             'level':'INFO',
         },
         'voting':{
-            'handlers':['console', 'file'],
+            'handlers':['console'],
             'level':'DEBUG',
         },
         'elections':{
-            'handlers':['console', 'file'],
+            'handlers':['console'],
             'level':'DEBUG',
         },
         'accounts':{
-            'handlers':['console', 'file'],
+            'handlers':['console'],
             'level':'DEBUG',
         },
         'blockchain':{

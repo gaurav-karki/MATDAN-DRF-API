@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Election, Candidate
+import logging
+
+logger = logging.getLogger('elections')
 
 
 class ElectionCreationSerializer(serializers.ModelSerializer):
@@ -13,6 +16,11 @@ class ElectionCreationSerializer(serializers.ModelSerializer):
         model = Election
         # Lists of the fields from the model to be included in the serialized output.
         fields = ('id', 'title', 'start_time', 'end_time', 'is_active')
+
+    def update(self, instance, validated_data):
+        logger.info(f"Election updated by admin:{instance.title}")
+        return super().update(instance, validated_data)
+    
 
     def validate(self, data):
         """

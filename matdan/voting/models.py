@@ -17,7 +17,7 @@ class Vote(models.Model):
 
     class Meta:
         """
-        Metadata ptions for the Vote model
+        Metadata 0ptions for the Vote model
         """
         #This constraint ensures that a user can vote only once per election.
         unique_together = ('voter', 'election')
