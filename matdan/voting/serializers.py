@@ -1,24 +1,39 @@
-from rest_framework import serializers
-from elections.models import Candidate
-from .models import Vote
 import hashlib
 import time
+
+from elections.models import Candidate
+from rest_framework import serializers
+
+from .models import Vote
+
 
 class CandidateDetailSerializer(serializers.ModelSerializer):
     """
     Nested Serializer for candidated deatils
     """
+
     class Meta:
         model = Candidate
-        fields = ['id', 'name', 'party', 'blockchain_id']
+        fields = ["id", "name", "party", "blockchain_id"]
+
+
 class VoteListSerializer(serializers.ModelSerializer):
     """
     Serializer for listing votes (GET request)
     """
+
     candidate = CandidateDetailSerializer(read_only=True)
+
     class Meta:
         model = Vote
-        fields = ['id', 'candidate','vote_hash','blockchain_tx', 'blockchain_hash','created_at']
+        fields = [
+            "id",
+            "candidate",
+            "vote_hash",
+            "blockchain_tx",
+            "blockchain_hash",
+            "created_at",
+        ]
 
 
 class VoteCreateSerializer(serializers.ModelSerializer):
@@ -30,92 +45,123 @@ class VoteCreateSerializer(serializers.ModelSerializer):
     - Candidate belongs to election
     - Candidate is synced to blockchain
     - User hasn't already voted
-    
+
     BLOCKCHAIN INTEGRATION:
     - vote_hash: Generated locally by Django (SHA256)
     - blockchain_tx: Transaction hash from blockchain (set by view)
     - blockchain_hash: Vote verification hash from smart contract (set by view)
     """
-    candidate_id = serializers.PrimaryKeyRelatedField(queryset=Candidate.objects.all(), source='candidate', write_only=True)
+
+    candidate_id = serializers.PrimaryKeyRelatedField(
+        queryset=Candidate.objects.all(), source="candidate", write_only=True
+    )
     candidate = CandidateDetailSerializer(read_only=True)
 
     class Meta:
         model = Vote
-        #list of the fields from the Vote (i.e voting/models.py) that will be included in the serializer
-        fields = ['id', 'candidate_id','candidate', 'vote_hash','blockchain_tx', 'blockchain_hash','created_at']
-        read_only_fields = ['id', 'candidate','vote_hash','blockchain_tx', 'blockchain_hash', 'created_at']
-
+        # list of the fields from the Vote (i.e voting/models.py) that will be included in the serializer
+        fields = [
+            "id",
+            "candidate_id",
+            "candidate",
+            "vote_hash",
+            "blockchain_tx",
+            "blockchain_hash",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "candidate",
+            "vote_hash",
+            "blockchain_tx",
+            "blockchain_hash",
+            "created_at",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # get election from context (passed from the view)
-        election = self.context.get('election')
+        election = self.context.get("election")
 
         if election:
             # Filter candidates to only show those in this election
-            self.fields['candidate_id'].queryset = Candidate.objects.filter(election=election)
+            self.fields["candidate_id"].queryset = Candidate.objects.filter(
+                election=election
+            )
 
     def validate(self, data):
         """
         Perform custom validation on the data for a new vote.
         """
-        user = self.context['request'].user
-        election = self.context['election']
-        candidate = data['candidate']
+        user = self.context["request"].user
+        election = self.context["election"]
+        candidate = data["candidate"]
 
-        #check if the election is currently active
+        # check if the election is currently active
         if not election.is_active:
             raise serializers.ValidationError("Election is not active.")
-        
-        #check if the selected candidate belongs to this specific election.
+
+        # check if the selected candidate belongs to this specific election.
         if candidate.election != election:
-            raise serializers.ValidationError("Candidate doesnot belong to this election")
-        
+            raise serializers.ValidationError(
+                "Candidate doesnot belong to this election"
+            )
+
         # Check if candidate is synced to blockchain
         if not candidate.blockchain_id:
-            raise serializers.ValidationError({
-                "candidate_id": "Candidate not synced to blockchain. Contact admin."
-            })
-        
-        #check if the user has already cast a vote in this election
+            raise serializers.ValidationError(
+                {"candidate_id": "Candidate not synced to blockchain. Contact admin."}
+            )
+
+        # check if the user has already cast a vote in this election
         if Vote.objects.filter(voter=user, election=election).exists():
             raise serializers.ValidationError("You have already voted")
-        
+
         # If all validations pass, return validated data
         return data
-    
+
     def create(self, validated_data):
         """
         Create a new vote with the election from context and current user as voter.
         Generates a local vote_hash for quick verification.
-        
+
         NOTE: blockchain_tx and blockchain_hash are NOT set here.
         They are set by the view after calling the blockchain service.
         """
 
-        #Get election from context and add it to validated_data
-        election = self.context.get('election')
-        user = self.context['request'].user
+        # Get election from context and add it to validated_data
+        election = self.context.get("election")
+        user = self.context["request"].user
 
-        #generate vote hash
-        vote_data = f"{user.id}-{election.id}-{validated_data['candidate'].id}-{time.time()}"
+        # generate vote hash
+        vote_data = (
+            f"{user.id}-{election.id}-{validated_data['candidate'].id}-{time.time()}"
+        )
         vote_hash = hashlib.sha256(vote_data.encode()).hexdigest()
 
-        validated_data['election'] = election
-        validated_data['voter'] = user
-        validated_data['vote_hash'] = vote_hash
+        validated_data["election"] = election
+        validated_data["voter"] = user
+        validated_data["vote_hash"] = vote_hash
 
         return super().create(validated_data)
-    
+
 
 class MyVoteSerializer(serializers.ModelSerializer):
     """
     Serializer for user's own vote with verification hash.
     """
+
     candidate = CandidateDetailSerializer(read_only=True)
-    election_title = serializers.CharField(source='election.title', read_only=True)
+    election_title = serializers.CharField(source="election.title", read_only=True)
 
     class Meta:
         model = Vote
-        fields = ['id', 'election', 'election_title', 'candidate', 'vote_hash', 'voted_at']
+        fields = [
+            "id",
+            "election",
+            "election_title",
+            "candidate",
+            "vote_hash",
+            "voted_at",
+        ]

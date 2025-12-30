@@ -1,9 +1,11 @@
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import SAFE_METHODS, BasePermission
+
 
 class IsAdminOrReadOnly(BasePermission):
     """
     Allow access to only admin user
     """
+
     def has_permission(self, request, view):
         # allow read-only methods for any user.
         if request.method in SAFE_METHODS:

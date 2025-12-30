@@ -9,12 +9,13 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-from dotenv import load_dotenv
-from pathlib import Path
-import sys
 import os
+import sys
+from pathlib import Path
 
-#Load environment variables from .env file
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,94 +26,91 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)s3*49bpcb*gc7g9$2k#tn7fm(aw7-#lsrvv(d^4h@aop8gk=+'
+SECRET_KEY = "django-insecure-)s3*49bpcb*gc7g9$2k#tn7fm(aw7-#lsrvv(d^4h@aop8gk=+"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.sites",
     # Third-party apps
-    'rest_framework',
-    'rest_framework.authtoken', #django rest framework built-in token authentication system.
-    'django_filters',
-    'guardian',
-    'debug_toolbar',
-    #Local apps
-    'accounts',
-    'elections',
-    'voting',
-    'blockchain',
+    "rest_framework",
+    "rest_framework.authtoken",  # django rest framework built-in token authentication system.
+    "django_filters",
+    "guardian",
+    "debug_toolbar",
+    # Local apps
+    "accounts",
+    "elections",
+    "voting",
+    "blockchain",
 ]
 
 SITE_ID = 1
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 INTERNAL_IPS = [
-    '127.0.0.1',
+    "127.0.0.1",
 ]
 
-ROOT_URLCONF = 'matdan.urls'
+ROOT_URLCONF = "matdan.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'matdan.wsgi.application'
+WSGI_APPLICATION = "matdan.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'matdan_db',
-        'USER':'matdan_user',
-        'PASSWORD':'gaurav@712118122',
-        'HOST':'localhost',
-        'PORT':'5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "matdan_db",
+        "USER": "matdan_user",
+        "PASSWORD": "gaurav@712118122",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
 # This logic checks if the 'test' command is being run.
 # If so, it overrides the default database to use a fast, in-memory SQLite database.
-if 'test' in sys.argv:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:'
-    }
+if "test" in sys.argv:
+    DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}
 
 
 # Password validation
@@ -120,16 +118,16 @@ if 'test' in sys.argv:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -137,9 +135,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -149,98 +147,145 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = "accounts.User"
 
-#Redirect to this URL after a successful login
-LOGIN_REDIRECT_URL = '/api/v1/'
+# Redirect to this URL after a successful login
+LOGIN_REDIRECT_URL = "/api/v1/"
 
 # REST_FRAMEWORK = django-filter as the default filter backend for DRF
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRenderer', 
-                                'rest_framework.renderers.BrowsableAPIRenderer'],
-    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination', #apply pagination to split large data size across multiple pages to improve performance and user experience
-    'PAGE_SIZE':10
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",  # apply pagination to split large data size across multiple pages to improve performance and user experience
+    "PAGE_SIZE": 10,
 }
 
 # AUTHENTICATION_BACKENDS=django_guardian requires its own authentication backend to handle object-level permissions
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend', # Django's default
-    'guardian.backends.ObjectPermissionBackend', # for django-guardian
+    "django.contrib.auth.backends.ModelBackend",  # Django's default
+    "guardian.backends.ObjectPermissionBackend",  # for django-guardian
 )
 
 # Media files (user-uploaded files)
-MEDIA_URL ='/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
-#======================================================
-#Blockchain Configuration
-#======================================================
+# ======================================================
+# Blockchain Configuration
+# ======================================================
 
 BLOCKCHAIN_CONFIG = {
     # URL of the Ethereum node (Ganache for development)
-    'PROVIDER_URL':os.getenv('BLOCKCHAIN_PROVIDER_URL'),
-
+    "PROVIDER_URL": os.getenv("BLOCKCHAIN_PROVIDER_URL"),
     # Private key for signing transactions (admin account)
-    'PRIVATE_KEY':os.getenv('BLOCKCHAIN_PRIVATE_KEY'),
-
+    "PRIVATE_KEY": os.getenv("BLOCKCHAIN_PRIVATE_KEY"),
     # Deployed contract address
-    'CONTRACT_ADDRESS':os.getenv('VOTING_CONTRACT_ADDRESS'),
-
-    # Chain_ID 
-    'CHAIN_ID': int(os.getenv('BLOCKCHAIN_CHAIN_ID', 1337)),
-
+    "CONTRACT_ADDRESS": os.getenv("VOTING_CONTRACT_ADDRESS"),
+    # Chain_ID
+    "CHAIN_ID": int(os.getenv("BLOCKCHAIN_CHAIN_ID", 1337)),
 }
 
 # lOGGING CONFIGURATION  for operations
 LOGGING = {
-    'version':1,
-    'disable_existing_loggers':False,
-    'formatters':{
-        'verbose':{
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
+    "version": 1,
+    # Keep existing loggers (Django's built-in loggers)
+    "disable_existing_loggers": False,
+    "formatters": {
+        # Verbose format: used in production env
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
         },
-        'simple':{
-            'format':'{levelname} {message}',
-            'style':'{',
+        # simple format used in development
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
         },
-    },
-    'handlers':{
-        'console':{
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file':{
-            'class':'logging.handlers.RotatingFileHandler',
-            'filename':'matdan_debug.log',
-            'maxBytes':1024 * 1024 * 15, #15MB
-            'backupCount':10,
-            'formatter': 'verbose',
+        # Custom format with function name and line number
+        "detailed": {
+            "format": "{levelname} {asctime} {module}:{funcName}:{lineno} - {message}",
+            "style": "{",
         },
     },
-    'loggers':{
-        'django':{
-            'handlers':['console'],
-            'level':'INFO',
+    "handlers": {
+        # Console handler - prints to terminal
+        "console": {
+            "class": "logging.StreamHandler",  # Outputs to stdout/stderr
+            "formatter": "verbose",  # using verbose formatter
+            "level": "DEBUG",  # Only logs DEBUG and above to console
         },
-        'voting':{
-            'handlers':['console'],
-            'level':'DEBUG',
+        # File handler - writes to rotating file
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/matdan_debug.log",
+            "maxBytes": 1024 * 1024 * 15,  # 15MB
+            "backupCount": 10,  # Keep 10 old files
+            "formatter": "verbose",
+            "level": "DEBUG",
         },
-        'elections':{
-            'handlers':['console'],
-            'level':'DEBUG',
+        # Error file handler - only errors and critical
+        "error_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "logs/matdan_errors.log",
+            "maxBytes": 1024 * 1024 * 10,  # 10MB
+            "backupCount": 5,
+            "formatter": "detailed",  # More details for errors
+            "level": "ERROR",  # Only ERROR and CRITICAL
         },
-        'accounts':{
-            'handlers':['console'],
-            'level':'DEBUG',
+        # Null handler - discards logs (useful for silencing)
+        "null": {
+            "class": "logging.NullHandler",
         },
-        'blockchain':{
-            'handlers':['console'],
-            'level':'DEBUG',
+    },
+    "loggers": {
+        # Django's built-in logger
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": False,
         },
+        # Django database queries (VERY VERBOSE - use carefully)
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "INFO",  # DEBUG only in development
+            "propagate": False,
+        },
+        # Django request/response logging
+        "django.request": {
+            "handlers": ["console", "error_file"],
+            "level": "ERROR",  # Log 404s, 500s, etc.
+            "propagate": False,
+        },
+        # Voting app logger - use the same name, when defining logger
+        "voting": {
+            "handlers": ["console", "file", "error_file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        # Elections app logger, logs everything from election
+        "elections": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+        # Accounts app logger
+        "accounts": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+        # blockchain app logger
+        "blockchain": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
+    # Root logger - catches everything not handled by specific loggers
+    "root": {
+        "handlers": ["console", "file"],
+        "level": "INFO",
     },
 }

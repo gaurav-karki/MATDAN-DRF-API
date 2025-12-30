@@ -4,29 +4,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0001_initial'),
+        ("accounts", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='user',
-            old_name='is_admin',
-            new_name='is_verified',
+            model_name="user",
+            old_name="is_admin",
+            new_name="is_verified",
         ),
         migrations.RemoveField(
-            model_name='user',
-            name='is_voter',
+            model_name="user",
+            name="is_voter",
         ),
         migrations.AddField(
-            model_name='user',
-            name='national_id_hash',
+            model_name="user",
+            name="national_id_hash",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='wallet_address',
+            model_name="user",
+            name="wallet_address",
             field=models.CharField(blank=True, max_length=255, null=True, unique=True),
         ),
     ]

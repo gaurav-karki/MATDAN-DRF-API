@@ -1,55 +1,82 @@
-from django.http import HttpResponse
-from rest_framework import generics
-from .models import Election, Candidate
-from rest_framework.viewsets import ModelViewSet
-from .serializers import ElectionCreationSerializer, CandidateSerializer
-from .permissions import IsAdminOrReadOnly
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
-from django.shortcuts import get_object_or_404
-from rest_framework.parsers import MultiPartParser, FormParser
-from blockchain.services import get_blockchain_service
 import logging
 
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from requests import Response
+from rest_framework import generics, status
+from rest_framework.filters import OrderingFilter
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.viewsets import ModelViewSet
 
-logger = logging.getLogger('election')
+from .models import Candidate, Election
+from .permissions import IsAdminOrReadOnly
+from .serializers import CandidateSerializer, ElectionCreationSerializer
 
-
-def elections_home(request):
-    return HttpResponse("Welcome to election home page.")
+logger = logging.getLogger("elections")
 
 
 class ElectionCreationView(ModelViewSet):
     """
     API endpoint to create new elections
     """
+
     queryset = Election.objects.all()
-    serializer_class = ElectionCreationSerializer
+    serializer_class = (
+        ElectionCreationSerializer  # serializer that handles the election creation
+    )
     permission_classes = [IsAdminOrReadOnly]
+    logger.info(f"Election can be created by superuser or admin only.")
 
-    #add OrderingFilter to filter_backends
+    # add OrderingFilter to filter_backends
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['is_active'] # This enables filtering by the 'is_active' field
+    filterset_fields = ["is_active"]  # This enables filtering by the 'is_active' field
+    # elections will be ordered based on the start_time
+    ordering_fields = ["start_time", "created_at"]
 
-    ordering_fields = ['start_time', 'created_at']
+    def create(self, request, *args, **kwargs):
+        logger.debug(f"Incoming data: {request.data}")
+        return super().create(request, *args, **kwargs)
+
 
 class ElectionUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Election.objects.all()
     serializer_class = ElectionCreationSerializer
+    logger.info("Update attempts by Admin user")
+
+    def update(self, request, *args, **kwargs):
+        logger.debug(f"Incoming data: {request.data}")
+        return super().update(request, *args, **kwargs)
+
 
 class CandidateListByElectionView(generics.ListCreateAPIView):
-    serializer_class = CandidateSerializer
+    serializer_class = (
+        CandidateSerializer  # serializer that handles the candidate creation
+    )
     permission_classes = [IsAdminOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]
 
     def get_queryset(self):
-        election_id = self.kwargs['election_id']
+        election_id = self.kwargs["election_id"]
+        logger.info("Elections data retrived sucessfully.")
         return Candidate.objects.filter(election_id=election_id)
-    
+
     def perform_create(self, serializer):
         """
         Associate the candidate with the election from the URL.
         """
-        election = get_object_or_404(Election, pk=self.kwargs['election_id'])
-        serializer.save(election=election)
-
+        # Print the contents of self.kwargs to verify the key and value exist
+        logger.debug(f"DEBUG: self.kwargs content:{self.kwargs}")
+        # print the specific election_id being accessed
+        try:
+            election = get_object_or_404(Election, pk=self.kwargs["election_id"])
+            logger.info(f"DEBUG: election_id from the url: '{election}'")
+            serializer.save(election=election)
+        except KeyError as e:
+            logger.error("Missing url parameter")
+            return Response(
+                {"error": f"Missing URL parameter: {e}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            logger.error(f"An unexpected error occurred: {e}")
+            raise

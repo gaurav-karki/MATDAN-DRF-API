@@ -5,63 +5,80 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('elections', '0005_alter_candidate_photo_url'),
+        ("elections", "0005_alter_candidate_photo_url"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='candidate',
-            options={'ordering': ['name']},
+            name="candidate",
+            options={"ordering": ["name"]},
         ),
         migrations.AlterModelOptions(
-            name='election',
-            options={'ordering': ['-created_at']},
+            name="election",
+            options={"ordering": ["-created_at"]},
         ),
         migrations.AddField(
-            model_name='candidate',
-            name='bio',
+            model_name="candidate",
+            name="bio",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='candidate',
-            name='blockchain_tx',
-            field=models.CharField(blank=True, help_text='Transaction hash when candidate was added to blockchain', max_length=66, null=True),
+            model_name="candidate",
+            name="blockchain_tx",
+            field=models.CharField(
+                blank=True,
+                help_text="Transaction hash when candidate was added to blockchain",
+                max_length=66,
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='candidate',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="candidate",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='candidate',
-            name='updated_at',
+            model_name="candidate",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='election',
-            name='blockchain_synced',
-            field=models.BooleanField(default=False, help_text='Whether election is synced to blockchain'),
+            model_name="election",
+            name="blockchain_synced",
+            field=models.BooleanField(
+                default=False, help_text="Whether election is synced to blockchain"
+            ),
         ),
         migrations.AddField(
-            model_name='election',
-            name='blockchain_tx',
-            field=models.CharField(blank=True, help_text='Transaction hash when election was created on blockchain', max_length=66, null=True),
+            model_name="election",
+            name="blockchain_tx",
+            field=models.CharField(
+                blank=True,
+                help_text="Transaction hash when election was created on blockchain",
+                max_length=66,
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='candidate',
-            name='blockchain_id',
-            field=models.PositiveIntegerField(blank=True, help_text='Candidate ID on blockchain (integer, assigned during sync)', null=True),
+            model_name="candidate",
+            name="blockchain_id",
+            field=models.PositiveIntegerField(
+                blank=True,
+                help_text="Candidate ID on blockchain (integer, assigned during sync)",
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='candidate',
-            name='party',
+            model_name="candidate",
+            name="party",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
         migrations.AlterUniqueTogether(
-            name='candidate',
-            unique_together={('election', 'blockchain_id')},
+            name="candidate",
+            unique_together={("election", "blockchain_id")},
         ),
     ]

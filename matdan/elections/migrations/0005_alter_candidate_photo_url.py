@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('elections', '0004_candidate'),
+        ("elections", "0004_candidate"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='candidate',
-            name='photo_url',
-            field=models.ImageField(blank=True, null=True, upload_to='candidate_pictures/'),
+            model_name="candidate",
+            name="photo_url",
+            field=models.ImageField(
+                blank=True, null=True, upload_to="candidate_pictures/"
+            ),
         ),
     ]

@@ -5,26 +5,25 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('elections', '0005_alter_candidate_photo_url'),
-        ('voting', '0001_initial'),
+        ("elections", "0005_alter_candidate_photo_url"),
+        ("voting", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='vote',
-            old_name='voter_id',
-            new_name='id',
+            model_name="vote",
+            old_name="voter_id",
+            new_name="id",
         ),
         migrations.RenameField(
-            model_name='vote',
-            old_name='user_id',
-            new_name='voter',
+            model_name="vote",
+            old_name="user_id",
+            new_name="voter",
         ),
         migrations.AlterUniqueTogether(
-            name='vote',
-            unique_together={('voter', 'election')},
+            name="vote",
+            unique_together={("voter", "election")},
         ),
     ]

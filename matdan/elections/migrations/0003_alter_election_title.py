@@ -5,15 +5,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('elections', '0002_alter_election_abi_interface_and_more'),
+        ("elections", "0002_alter_election_abi_interface_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='election',
-            name='title',
-            field=models.CharField(max_length=255, validators=[django.core.validators.MinLengthValidator(10)]),
+            model_name="election",
+            name="title",
+            field=models.CharField(
+                max_length=255,
+                validators=[django.core.validators.MinLengthValidator(10)],
+            ),
         ),
     ]
