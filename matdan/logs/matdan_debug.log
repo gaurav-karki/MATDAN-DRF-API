@@ -188,3 +188,33 @@ INFO 2025-12-31 19:10:57,437 autoreload 11836 3520 Watching for file changes wit
 INFO 2025-12-31 22:58:08,954 autoreload 9032 11948 Watching for file changes with StatReloader
 INFO 2025-12-31 22:58:33,198 autoreload 9032 11948 C:\Users\HP\Desktop\DjangoApp\matdan\voting\views.py changed, reloading.
 INFO 2025-12-31 22:58:33,938 autoreload 10340 7352 Watching for file changes with StatReloader
+INFO 2025-12-31 23:37:41,535 autoreload 2560 17336 Watching for file changes with StatReloader
+WARNING 2025-12-31 23:37:45,483 log 2560 13240 "GET / HTTP/1.1" 404 16546
+WARNING 2025-12-31 23:38:14,857 log 2560 13240 "GET /api/v1/accounts HTTP/1.1" 404 17469
+INFO 2025-12-31 23:38:43,058 log 2560 13240 "GET /api/v1/accounts/register HTTP/1.1" 301 0
+WARNING 2025-12-31 23:38:43,820 log 2560 13240 "GET /api/v1/accounts/register/ HTTP/1.1" 403 22909
+INFO 2025-12-31 23:38:53,601 log 2560 13240 "POST /api-auth/logout/?next=/api/v1/accounts/register/ HTTP/1.1" 302 0
+WARNING 2025-12-31 23:38:53,760 log 2560 13240 "GET /api/v1/accounts/register/ HTTP/1.1" 405 27297
+INFO 2025-12-31 23:40:32,095 log 2560 13240 "POST /api/v1/accounts/register/ HTTP/1.1" 201 27498
+INFO 2025-12-31 23:41:12,247 log 2560 13240 "GET /api/v1/elections/ HTTP/1.1" 200 28074
+WARNING 2025-12-31 23:41:53,984 log 2560 13240 "GET /api/v1/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/camdidates HTTP/1.1" 404 20532
+INFO 2025-12-31 23:42:02,739 log 2560 13240 "GET /api/v1/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/candidates HTTP/1.1" 200 26698
+INFO 2025-12-31 23:43:22,159 log 2560 13240 "GET /api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/sync HTTP/1.1" 301 0
+WARNING 2025-12-31 23:43:22,183 log 2560 13240 "GET /api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/sync/ HTTP/1.1" 403 22584
+INFO 2025-12-31 23:43:27,606 log 2560 13240 "GET /api-auth/login/?next=/api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/sync/ HTTP/1.1" 200 16662
+INFO 2025-12-31 23:43:41,740 log 2560 13240 "POST /api-auth/login/ HTTP/1.1" 302 0
+WARNING 2025-12-31 23:43:41,825 log 2560 13240 "GET /api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/sync/ HTTP/1.1" 405 25821
+INFO 2025-12-31 23:44:01,466 log 2560 13240 "POST /api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/sync/ HTTP/1.1" 201 28227
+INFO 2025-12-31 23:44:01,691 log 2560 13240 "GET /__debug__/history_sidebar/?request_id=4ce1813252c54561bccc965c3d05ee46 HTTP/1.1" 200 10246
+INFO 2025-12-31 23:45:10,850 log 2560 13240 "GET /api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/activate HTTP/1.1" 301 0
+WARNING 2025-12-31 23:45:10,931 log 2560 13240 "GET /api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/activate/ HTTP/1.1" 405 25528
+INFO 2025-12-31 23:45:34,161 log 2560 13240 "POST /api/v1/blockchain/elections/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/activate/ HTTP/1.1" 200 25679
+INFO 2025-12-31 23:45:34,383 log 2560 13240 "GET /__debug__/history_sidebar/?request_id=e567ab1f3fd546f68ffeac1690bbb5c8 HTTP/1.1" 200 10249
+INFO 2025-12-31 23:46:42,422 log 2560 13240 "GET /api/v1/votes/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/vote HTTP/1.1" 301 0
+INFO 2025-12-31 23:46:42,753 log 2560 13240 "GET /api/v1/votes/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/vote/ HTTP/1.1" 200 29037
+WARNING 2025-12-31 23:46:59,763 log 2560 13240 "POST /api/v1/votes/c2a7b537-b92d-41cc-a4a1-cebc6781a8e0/vote/ HTTP/1.1" 403 24777
+INFO 2025-12-31 23:48:53,872 log 2560 13240 "GET /api/v1/elections HTTP/1.1" 301 0
+INFO 2025-12-31 23:48:54,129 log 2560 13240 "GET /api/v1/elections/ HTTP/1.1" 200 32720
+INFO 2025-12-31 23:49:34,255 log 2560 13240 "GET /api/v1/votes/66a738b2-e515-4791-a448-fdf7d5945344/results HTTP/1.1" 301 0
+INFO 2025-12-31 23:49:34,384 log 2560 13240 "GET /api/v1/votes/66a738b2-e515-4791-a448-fdf7d5945344/results/ HTTP/1.1" 200 25810
+INFO 2025-12-31 23:50:34,397 log 2560 13240 "GET /api/v1/blockchain/elections/66a738b2-e515-4791-a448-fdf7d5945344/results/ HTTP/1.1" 200 26736

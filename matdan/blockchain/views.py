@@ -122,6 +122,25 @@ class SyncElectionToBlockchainView(APIView):
         # Get election from Django
         election = get_object_or_404(Election, pk=election_id)
         logger.info(f"Sync election started | election_id = {election_id}")
+
+        # CHECK IF ALREADY SYNCED
+        if election.blockchain_synced:
+            logger.warning(
+                f"Election already synced to blockchain | election_id={election_id}"
+            )
+            return Response(
+                {
+                    "status": "error",
+                    "message": "This election has already been synced to the blockchain",
+                    "data": {
+                        "election_id": str(election.id),
+                        "blockchain_tx": election.blockchain_tx,
+                        "synced": True,
+                    },
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
             service = get_blockchain_service()
         except (BlockchainConnectionError, ContractNotLoadedError) as e:
@@ -132,17 +151,24 @@ class SyncElectionToBlockchainView(APIView):
             )
 
         results = {"election": None, "candidates": [], "errors": []}
-        start = time.time()
+
         # Step 1: Create election on blockchain
         success, tx_result = service.create_election(str(election.id), election.title)
-        elapsed = time.time() - start
+
         if success:
-            logger.info(
-                f"Create election took {elapsed:.2f}s | election_id={election.id}"
-            )
             logger.info(
                 f"Election created on blockchain | election_id={election.id} | tx={tx_result}"
             )
+            # Mark as synced and save transaction hash
+            election.blockchain_synced = True
+            election.blockchain_tx = tx_result
+            election.save()
+
+            results["election"] = {
+                "id": str(election.id),
+                "title": election.title,
+                "tx_hash": tx_result,
+            }
         else:
             logger.error(
                 f"Election creation failed | election_id={election.id} | error={tx_result}"
@@ -154,12 +180,6 @@ class SyncElectionToBlockchainView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-        results["election"] = {
-            "id": str(election.id),
-            "title": election.title,
-            "tx_hash": tx_result,
-        }
 
         # Step 2: Add each candidate
         candidates = election.candidates.all()
@@ -173,9 +193,11 @@ class SyncElectionToBlockchainView(APIView):
             if success:
                 # Save blockchain ID to Django model
                 candidate.blockchain_id = blockchain_id
+                candidate.blockchain_tx = tx_result
                 candidate.save()
-                logger.debug(
-                    f"Adding candidate | candidate_id={candidate.id} | blockchain_id={blockchain_id}"
+
+                logger.info(
+                    f"Candidate synced | candidate_id={candidate.id} | blockchain_id={blockchain_id}"
                 )
                 results["candidates"].append(
                     {

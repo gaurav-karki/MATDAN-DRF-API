@@ -12,7 +12,7 @@ from .models import Candidate, Election
 from .permissions import IsAdminOrReadOnly
 from .serializers import CandidateSerializer, ElectionCreationSerializer
 
-logger = logging.getLogger("elections")
+logger = logging.getLogger(__name__)
 
 
 class ElectionCreationView(ModelViewSet):
@@ -32,18 +32,10 @@ class ElectionCreationView(ModelViewSet):
     # elections will be ordered based on the start_time
     ordering_fields = ["start_time", "created_at"]
 
-    def create(self, request, *args, **kwargs):
-        logger.debug(f"Incoming data: {request.data}")
-        return super().create(request, *args, **kwargs)
-
 
 class ElectionUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Election.objects.all()
     serializer_class = ElectionCreationSerializer
-
-    def update(self, request, *args, **kwargs):
-        logger.debug(f"Incoming data: {request.data}")
-        return super().update(request, *args, **kwargs)
 
 
 class CandidateListByElectionView(generics.ListCreateAPIView):
@@ -55,31 +47,30 @@ class CandidateListByElectionView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         election_id = self.kwargs["election_id"]
-        logger.info("Elections data retrived sucessfully.")
+        logger.info(f"Fetching candidates for elections: {election_id}")
         return Candidate.objects.filter(election_id=election_id)
+
+    def get_serializer_context(self):
+        """
+        Pass the actual election OBJECT to the serializer context.
+        This is crucial for validation to work correctly.
+        """
+        context = super().get_serializer_context()
+        election_id = self.kwargs.get("election_id")
+
+        # Get the election object and passs it in context
+        election = get_object_or_404(Election, pk=election_id)
+        context["election"] = election
+
+        logger.debug(f"Serializer context includes elections: {election.title}")
+        return context
 
     def perform_create(self, serializer):
         """
         Associate the candidate with the election from the URL.
         """
-        # Print the contents of self.kwargs to verify the key and value exist
-        logger.debug(f"self.kwargs content:{self.kwargs}")
-        # print the specific election_id being accessed
-        try:
-            election = get_object_or_404(Election, pk=self.kwargs["election_id"])
-            logger.info(f"election_id from the url: '{election}'")
-            serializer.save(election=election)
-        except KeyError as e:
-            logger.error("Missing url parameter")
-            return Response(
-                {"error": f"Missing URL parameter: {e}"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
-            raise
+        election_id = self.kwargs["election_id"]
+        election = get_object_or_404(Election, pk=election_id)
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["election_id"] = self.kwargs.get("election_id")
-        return context
+        logger.info(f"Creating candidate for election: {election.title}")
+        serializer.save(election=election)

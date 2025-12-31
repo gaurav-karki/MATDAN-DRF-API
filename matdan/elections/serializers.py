@@ -92,11 +92,10 @@ class CandidateSerializer(serializers.ModelSerializer):
         instance = self.instance
         # Get the name from the incoming data or from the existing instance if not provided.
         name = data.get("name", instance.name if instance else None)
-        election = (
-            data.get("election")
-            or (instance.election if instance else None)
-            or self.context.get("election_id")
-        )
+        election = self.context.get("election")
+
+        if not election:
+            raise serializers.ValidationError("Election context is required")
 
         logger.debug(
             f"Validating candidate: name = {name}, election = {election}, instance = {instance}"
@@ -109,15 +108,20 @@ class CandidateSerializer(serializers.ModelSerializer):
 
         # Ensure the candidate name is unique
         qs = Candidate.objects.filter(name=name)
-        if election:
-            qs = qs.filter(election=election)
+
+        # If updating exclude the current instance
         if instance:
             qs = qs.exclude(pk=instance.pk)
+
         if qs.exists():
             logger.warning(
                 f"Candidate with name: '{name}' already exists in the election: '{election}'"
             )
-            raise serializers.ValidationError("Candidate with the name already exists")
-        logger.info(f"Candidate '{name}' passed validation for election '{election}'.")
+            raise serializers.ValidationError(
+                f"A Candidate with the name '{name}' already exists in the election"
+            )
+        logger.info(
+            f"Candidate '{name}' passed validation for election '{election.title}'"
+        )
         # return the validated data if all checks pass.
         return data
