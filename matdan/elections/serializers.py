@@ -92,7 +92,7 @@ class CandidateSerializer(serializers.ModelSerializer):
         instance = self.instance
         # Get the name from the incoming data or from the existing instance if not provided.
         name = data.get("name", instance.name if instance else None)
-        election = self.context.get("election")
+        election = self.context.get("election") or data.get("election")
 
         if not election:
             raise serializers.ValidationError("Election context is required")
@@ -106,8 +106,16 @@ class CandidateSerializer(serializers.ModelSerializer):
             logger.warning("Candidate name too short.")
             raise serializers.ValidationError("Name cannot be of 1 letter")
 
+        if Candidate.objects.filter(name=name, election=election).exists():
+            logger.warning(
+                f"Candidate with name '{name}' already exists in this election."
+            )
+            raise serializers.ValidationError(
+                "This candidate already exists for this election."
+            )
+
         # Ensure the candidate name is unique
-        qs = Candidate.objects.filter(name=name)
+        qs = Candidate.objects.filter(name=name, election=election)
 
         # If updating exclude the current instance
         if instance:

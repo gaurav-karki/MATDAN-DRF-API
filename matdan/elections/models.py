@@ -73,10 +73,11 @@ class Candidate(models.Model):
 
     class Meta:
         ordering = ["name"]
-        unique_together = (
-            "election",
-            "blockchain_id",
-        )  # Unique blockchain_id per election
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "election"], name="unique_candidate_per_election"
+            )
+        ]
 
     def __str__(self):
         return f"{self.name} - {self.party}"

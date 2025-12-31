@@ -222,3 +222,22 @@ INFO 2026-01-01 00:01:42,422 autoreload 1552 14744 Watching for file changes wit
 INFO 2026-01-01 00:02:23,492 log 1552 9796 "GET /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 200 29995
 WARNING 2026-01-01 00:02:43,179 log 1552 9796 "POST /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 400 29058
 INFO 2026-01-01 00:02:57,620 log 1552 9796 "GET /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 200 29994
+INFO 2026-01-01 00:20:30,515 autoreload 11352 16980 Watching for file changes with StatReloader
+INFO 2026-01-01 00:20:44,908 log 11352 17936 "GET /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 200 29995
+WARNING 2026-01-01 00:20:59,356 log 11352 17936 "POST /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 400 29058
+INFO 2026-01-01 00:21:48,920 log 11352 17936 "GET /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 200 29994
+WARNING 2026-01-01 00:24:38,320 log 11352 5636 "POST /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 400 29058
+INFO 2026-01-01 00:31:04,363 autoreload 11352 16980 C:\Users\HP\Desktop\DjangoApp\matdan\elections\serializers.py changed, reloading.
+INFO 2026-01-01 00:31:05,247 autoreload 17864 16536 Watching for file changes with StatReloader
+INFO 2026-01-01 00:31:07,773 autoreload 17864 16536 C:\Users\HP\Desktop\DjangoApp\matdan\elections\serializers.py changed, reloading.
+INFO 2026-01-01 00:31:08,555 autoreload 10452 17224 Watching for file changes with StatReloader
+INFO 2026-01-01 00:31:12,097 autoreload 10452 17224 C:\Users\HP\Desktop\DjangoApp\matdan\elections\serializers.py changed, reloading.
+INFO 2026-01-01 00:31:12,886 autoreload 16848 16908 Watching for file changes with StatReloader
+INFO 2026-01-01 00:31:18,655 autoreload 16848 16908 C:\Users\HP\Desktop\DjangoApp\matdan\elections\serializers.py changed, reloading.
+INFO 2026-01-01 00:31:19,433 autoreload 3008 7136 Watching for file changes with StatReloader
+INFO 2026-01-01 00:31:41,438 autoreload 3008 7136 C:\Users\HP\Desktop\DjangoApp\matdan\elections\serializers.py changed, reloading.
+INFO 2026-01-01 00:31:42,179 autoreload 11760 18100 Watching for file changes with StatReloader
+INFO 2026-01-01 00:31:49,166 autoreload 11760 18100 C:\Users\HP\Desktop\DjangoApp\matdan\elections\serializers.py changed, reloading.
+INFO 2026-01-01 00:31:49,914 autoreload 8888 8504 Watching for file changes with StatReloader
+INFO 2026-01-01 00:32:07,790 log 8888 16848 "POST /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 201 29177
+INFO 2026-01-01 00:32:23,318 log 8888 16848 "GET /api/v1/elections/66a738b2-e515-4791-a448-fdf7d5945344/candidates HTTP/1.1" 200 30317
