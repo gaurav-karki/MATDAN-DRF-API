@@ -252,7 +252,7 @@ LOGGING = {
         # Django database queries (VERY VERBOSE - use carefully)
         "django.db.backends": {
             "handlers": ["console"],
-            "level": "DEBUG" if DEBUG else "INFO",  # DEBUG only in development
+            "level": "INFO",  # DEBUG only in development
             "propagate": False,
         },
         # Django request/response logging
@@ -271,16 +271,15 @@ LOGGING = {
         "elections": {
             "handlers": ["console"],
             "level": "DEBUG",
+            "propagate": False,
         },
         # Accounts app logger
-        "accounts": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-        },
+        "accounts": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
         # blockchain app logger
         "blockchain": {
             "handlers": ["console"],
             "level": "DEBUG",
+            "propagate": False,
         },
     },
     # Root logger - catches everything not handled by specific loggers

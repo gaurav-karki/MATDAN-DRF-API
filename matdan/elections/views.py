@@ -25,7 +25,6 @@ class ElectionCreationView(ModelViewSet):
         ElectionCreationSerializer  # serializer that handles the election creation
     )
     permission_classes = [IsAdminOrReadOnly]
-    logger.info(f"Election can be created by superuser or admin only.")
 
     # add OrderingFilter to filter_backends
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -41,7 +40,6 @@ class ElectionCreationView(ModelViewSet):
 class ElectionUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Election.objects.all()
     serializer_class = ElectionCreationSerializer
-    logger.info("Update attempts by Admin user")
 
     def update(self, request, *args, **kwargs):
         logger.debug(f"Incoming data: {request.data}")
@@ -65,11 +63,11 @@ class CandidateListByElectionView(generics.ListCreateAPIView):
         Associate the candidate with the election from the URL.
         """
         # Print the contents of self.kwargs to verify the key and value exist
-        logger.debug(f"DEBUG: self.kwargs content:{self.kwargs}")
+        logger.debug(f"self.kwargs content:{self.kwargs}")
         # print the specific election_id being accessed
         try:
             election = get_object_or_404(Election, pk=self.kwargs["election_id"])
-            logger.info(f"DEBUG: election_id from the url: '{election}'")
+            logger.info(f"election_id from the url: '{election}'")
             serializer.save(election=election)
         except KeyError as e:
             logger.error("Missing url parameter")
@@ -80,3 +78,8 @@ class CandidateListByElectionView(generics.ListCreateAPIView):
         except Exception as e:
             logger.error(f"An unexpected error occurred: {e}")
             raise
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["election_id"] = self.kwargs.get("election_id")
+        return context

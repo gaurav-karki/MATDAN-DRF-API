@@ -92,7 +92,11 @@ class CandidateSerializer(serializers.ModelSerializer):
         instance = self.instance
         # Get the name from the incoming data or from the existing instance if not provided.
         name = data.get("name", instance.name if instance else None)
-        election = data.get("election", instance.election if instance else None)
+        election = (
+            data.get("election")
+            or (instance.election if instance else None)
+            or self.context.get("election_id")
+        )
 
         logger.debug(
             f"Validating candidate: name = {name}, election = {election}, instance = {instance}"
